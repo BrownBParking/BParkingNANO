@@ -8,7 +8,6 @@
 #include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
 #include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
 #include "FWCore/Utilities/interface/InputTag.h"
-#include "DataFormats/Common/interface/RefToPtr.h"
 #include "DataFormats/Common/interface/View.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 
@@ -39,9 +38,6 @@ public:
     muonToken_(consumes<pat::MuonCollection>(cfg.getParameter<edm::InputTag>("muons"))),
     eleToken_(consumes<pat::ElectronCollection>(cfg.getParameter<edm::InputTag>("pfElectrons"))),
     vertexToken_(consumes<reco::VertexCollection> (cfg.getParameter<edm::InputTag>( "vertices" ))), 
-    lowptele_(consumes<pat::ElectronCollection>(cfg.getParameter<edm::InputTag>("lowPtElectrons"))),
-    gsf2packed_(consumes<edm::Association<pat::PackedCandidateCollection> >(cfg.getParameter<edm::InputTag>("gsf2packed"))),
-    gsf2lost_(consumes<edm::Association<pat::PackedCandidateCollection> >(cfg.getParameter<edm::InputTag>("gsf2lost"))),
     trkPtCut_(cfg.getParameter<double>("trkPtCut")),
     trkEtaCut_(cfg.getParameter<double>("trkEtaCut")),
     dzTrg_cleaning_(cfg.getParameter<double>("dzTrg_cleaning")),
@@ -69,9 +65,6 @@ private:
   const edm::EDGetTokenT<pat::MuonCollection> muonToken_;
   const edm::EDGetTokenT<pat::ElectronCollection> eleToken_;
   const edm::EDGetTokenT<reco::VertexCollection> vertexToken_;
-  const edm::EDGetTokenT<pat::ElectronCollection> lowptele_;
-  const edm::EDGetTokenT<edm::Association<pat::PackedCandidateCollection> > gsf2packed_;
-  const edm::EDGetTokenT<edm::Association<pat::PackedCandidateCollection> > gsf2lost_;
 
   //selections                                                                 
   const double trkPtCut_;
@@ -90,6 +83,7 @@ private:
 
 void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const &stp) const {
 
+  //std::cout<<"Track sequence"<<std::endl;
   //input
   edm::Handle<reco::BeamSpot> beamSpotHandle;
   evt.getByToken(beamSpotSrc_, beamSpotHandle);
@@ -114,13 +108,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
   edm::Handle<reco::VertexCollection> vertexHandle;
   evt.getByToken(vertexToken_, vertexHandle);
   const reco::Vertex & PV = vertexHandle->front();
-
-  edm::Handle<pat::ElectronCollection> lowptele;
-  evt.getByToken(lowptele_, lowptele);
-  edm::Handle<edm::Association<pat::PackedCandidateCollection> > gsf2packed;
-  evt.getByToken(gsf2packed_, gsf2packed);
-  edm::Handle<edm::Association<pat::PackedCandidateCollection> > gsf2lost;
-  evt.getByToken(gsf2lost_, gsf2lost);
+  math::XYZPoint pv(PV.x(), PV.y(), PV.z());
 
   //for lost tracks / pf discrimination
   unsigned int nTracks = tracks->size();
@@ -137,13 +125,16 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
    std::vector<pat::PackedCandidate> totalTracks(*tracks);
    totalTracks.insert(totalTracks.end(),lostTracks->begin(),lostTracks->end());
   */
- 
-  // for loop is better to be range based - especially for large ensembles  
+
+   // for loop is better to be range based - especially for large ensembles  
   for( unsigned int iTrk=0; iTrk<totalTracks; ++iTrk ) {
-    const pat::PackedCandidate & trk = (iTrk < nTracks) ? (*tracks)[iTrk] : (*lostTracks)[iTrk-nTracks];
+    const pat::PackedCandidate & trk = (iTrk < nTracks) ? (*tracks)[iTrk] : (*tracks)[iTrk-nTracks];
 
     //arranging cuts for speed
+    //std::cout<<"1 : "<<trk.pdgId()<<std::endl;
+    //const reco::TransientTrack faketrackTT( (*trk.bestTrack()) , &(*bFieldHandle));
     if(!trk.hasTrackDetails()) continue;
+//    std::cout<<"2 : "<<trk.pdgId()<<std::endl;
     if(abs(trk.pdgId()) != 211) continue; //do we want also to keep muons?
     if(trk.pt() < trkPtCut_ ) continue;
     if(fabs(trk.eta()) > trkEtaCut_) continue;
@@ -154,8 +145,9 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
          trkNormChiMax_>0)  )    continue; 
 
     bool skipTrack=true;
-    float dzTrg = 0.0;
     for (const pat::Muon & mu: *trgMuons){
+      //std::cout<<"dz wrt PV : "<<mu.vz() - PV.z()<<std::endl;
+
       //remove tracks inside trg muons jet
       if(reco::deltaR(trk, mu) < drTrg_Cleaning_ && drTrg_Cleaning_ >0) 
         continue;
@@ -163,7 +155,6 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
       if((fabs(trk.vz() - mu.vz()) > dzTrg_cleaning_ && dzTrg_cleaning_ > 0))
         continue;
       skipTrack=false;
-      dzTrg = trk.vz() - mu.vz();
       break; // at least for one trg muon to pass this cuts
     }
     // if track is closer to at least a triggering muon keep it
@@ -177,8 +168,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     float DCABS = DCA.first;
     float DCABSErr = DCA.second;
     float DCASig = (DCABSErr != 0 && float(DCABSErr) == DCABSErr) ? fabs(DCABS/DCABSErr) : -1;
-    if (DCASig >  dcaSig_  && dcaSig_ >0) continue;
-
+    if (DCASig <  dcaSig_  && dcaSig_ >0) continue;
     // clean tracks wrt to all muons
     int matchedToMuon       = 0;
     int matchedToLooseMuon  = 0;
@@ -218,21 +208,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
 
     }
 
-    // clean tracks wrt to all low pT electrons
-    edm::Ptr<pat::PackedCandidate> track;
-    if ( iTrk < nTracks ) { track = edm::Ptr<pat::PackedCandidate>(tracks,iTrk); }
-    else { track = edm::Ptr<pat::PackedCandidate>(lostTracks,iTrk-nTracks); }
-    int matchedToLowPtEle = 0;
-    for ( auto const& ele : *lowptele ) {
-      reco::GsfTrackRef gsf = ele.gsfTrack();
-      if ( iTrk < nTracks ) {
-	edm::Ptr<pat::PackedCandidate> packed = edm::refToPtr( (*gsf2packed)[gsf] );
-	if ( track == packed ) { matchedToLowPtEle = 1; break; }
-      } else {
-	edm::Ptr<pat::PackedCandidate> lost = edm::refToPtr( (*gsf2lost)[gsf] );
-	if ( track == lost ) { matchedToLowPtEle = 1; break; }
-      }
-    }
+    //std::cout<<trk.dz()<<" vs "<<trk.dz(pv)<<std::endl;
 
     pat::CompositeCandidate pcand;
     pcand.setP4(trk.p4());
@@ -241,20 +217,17 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     pcand.setPdgId(trk.pdgId());
     pcand.addUserInt("isPacked", (iTrk < nTracks));
     pcand.addUserInt("isLostTrk", (iTrk < nTracks) ? 0 : 1);      
-    pcand.addUserFloat("dxy", trk.dxy());
-    pcand.addUserFloat("dxyS", trk.dxy()/trk.dxyError());
-    pcand.addUserFloat("dz", trk.dz()); 
-    pcand.addUserFloat("dzS", trk.dz()/trk.dzError());
+    pcand.addUserFloat("dxy", trk.dxy(pv));
+    pcand.addUserFloat("dxyS", trk.dxy(pv)/trk.dxyError());
+    pcand.addUserFloat("dz", trk.dz(pv)); 
+    pcand.addUserFloat("dzS", trk.dz(pv)/trk.dzError());
     pcand.addUserFloat("DCASig", DCASig);
-    pcand.addUserFloat("dzTrg", dzTrg);
     pcand.addUserInt("isMatchedToMuon", matchedToMuon);
     pcand.addUserInt("isMatchedToLooseMuon", matchedToLooseMuon);
     pcand.addUserInt("isMatchedToSoftMuon", matchedToSoftMuon);
     pcand.addUserInt("isMatchedToMediumMuon", matchedToMediumMuon);
     pcand.addUserInt("isMatchedToEle", matchedToEle);
-    pcand.addUserInt("isMatchedToLowPtEle", matchedToLowPtEle);
     pcand.addUserInt("nValidHits", trk.bestTrack()->found());
-    pcand.addUserInt("keyPacked", iTrk);
     //adding the candidate in the composite stuff for fit (need to test)
     if ( iTrk < nTracks )
       pcand.addUserCand( "cand", edm::Ptr<pat::PackedCandidate> ( tracks, iTrk ));
