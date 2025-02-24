@@ -5,34 +5,39 @@ electronPairsForKee = cms.EDProducer(
     'DiElectronBuilder',
     src = cms.InputTag('electronsForAnalysis', 'SelectedElectrons'),
     transientTracksSrc = cms.InputTag('electronsForAnalysis', 'SelectedTransientElectrons'),
-    lep1Selection = cms.string('pt > 1.5 && userFloat("unBiased") >= 3'),
+    lep1Selection = cms.string('pt > 1.3'),
     lep2Selection = cms.string(''),
     preVtxSelection = cms.string(
         'abs(userCand("l1").vz - userCand("l2").vz) <= 1. && mass() < 5 '
-        '&& mass() > 0 && charge() == 0 && userFloat("lep_deltaR") > 0.03'
+        '&& mass() > 0 && charge() == 0 && userFloat("lep_deltaR") > 0.03 && userInt("nlowpt")<2'
+        
     ),
     postVtxSelection = cms.string('userFloat("sv_chi2") < 998 && userFloat("sv_prob") > 1.e-5'),
 )
 
 BToKee = cms.EDProducer(
     'BToKLLBuilder',
-    dileptons = cms.InputTag('electronPairsForKee'),
+    dileptons = cms.InputTag('electronPairsForKee', 'SelectedDiLeptons'),
+    dileptonKinVtxs = cms.InputTag('electronPairsForKee', 'SelectedDiLeptonKinVtxs'),
     leptonTransientTracks = electronPairsForKee.transientTracksSrc,
     kaons = cms.InputTag('tracksBPark', 'SelectedTracks'),
     kaonsTransientTracks = cms.InputTag('tracksBPark', 'SelectedTransientTracks'),
     beamSpot = cms.InputTag("offlineBeamSpot"),
+    offlinePrimaryVertexSrc = cms.InputTag('offlineSlimmedPrimaryVertices'),
     tracks = cms.InputTag("packedPFCandidates"),
     lostTracks = cms.InputTag("lostTracks"),
     kaonSelection = cms.string(''),
-    isoTracksSelection = cms.string('pt > 0.7 && abs(eta)<2.5'),
+    isoTracksSelection = cms.string('pt > 0.5 && abs(eta)<2.5'),
+    isoTracksDCASelection = cms.string('pt > 0.5 && abs(eta)<2.5'),
+    isotrkDCACut = cms.double(1.0),
+    isotrkDCATightCut = cms.double(0.1),
+    drIso_cleaning = cms.double(0.03),
     preVtxSelection = cms.string(
-        'pt > 3. && userFloat("min_dr") > 0.03 '
+        'pt > 1.75 && userFloat("min_dr") > 0.03 '
         '&& mass < 7. && mass > 4.'
         ),
     postVtxSelection = cms.string(
-        'userInt("sv_OK") == 1 && userFloat("sv_prob") > 0.001 '
-        '&& userFloat("fitted_cos_theta_2D") >= 0 '
-        '&& userFloat("fitted_mass") > 4.5 && userFloat("fitted_mass") < 6.'
+         'userInt("sv_OK") == 1 && userFloat("fitted_mass") > 4.5 && userFloat("fitted_mass") < 6.'
     )
 )
 
@@ -49,24 +54,28 @@ muonPairsForKmumu = cms.EDProducer(
 
 BToKmumu = cms.EDProducer(
     'BToKLLBuilder',
-    dileptons = cms.InputTag('muonPairsForKmumu'),
+    dileptons = cms.InputTag('muonPairsForKmumu', 'SelectedDiLeptons'),
+    dileptonKinVtxs = cms.InputTag('muonPairsForKmumu', 'SelectedDiLeptonKinVtxs'),
     leptonTransientTracks = muonPairsForKmumu.transientTracksSrc,
     kaons = BToKee.kaons,
     kaonsTransientTracks = BToKee.kaonsTransientTracks,
     beamSpot = cms.InputTag("offlineBeamSpot"),
+    offlinePrimaryVertexSrc = cms.InputTag('offlineSlimmedPrimaryVertices'),
     tracks = cms.InputTag("packedPFCandidates"),
     lostTracks = cms.InputTag("lostTracks"),
     kaonSelection = cms.string(''),
     isoTracksSelection = BToKee.isoTracksSelection,
+    isoTracksDCASelection = BToKee.isoTracksDCASelection,
+    isotrkDCACut = BToKee.isotrkDCACut,
+    isotrkDCATightCut = BToKee.isotrkDCATightCut,
+    drIso_cleaning = BToKee.drIso_cleaning,
     # This in principle can be different between electrons and muons
     preVtxSelection = cms.string(
-        'pt > 3. && userFloat("min_dr") > 0.03'
+        'pt > 1.75 && userFloat("min_dr") > 0.03 '
         '&& mass < 7. && mass > 4.'
         ),
     postVtxSelection = cms.string(
-        'userInt("sv_OK") == 1 && userFloat("sv_prob") > 0.001 '
-        '&& userFloat("fitted_cos_theta_2D") >= 0'
-        '&& userFloat("fitted_mass") > 4.5 && userFloat("fitted_mass") < 6.'
+         'userInt("sv_OK") == 1 && userFloat("fitted_mass") > 4.5 && userFloat("fitted_mass") < 6.'
     )
 )
 
@@ -120,6 +129,10 @@ BToKeeTable = cms.EDProducer(
         fit_k_pt = ufloat('fitted_k_pt'),
         fit_k_eta = ufloat('fitted_k_eta'),
         fit_k_phi = ufloat('fitted_k_phi'),
+        k_svip2d = ufloat('k_svip2d'),
+        k_svip2d_err = ufloat('k_svip2d_err'),
+        k_svip3d = ufloat('k_svip3d'),
+        k_svip3d_err = ufloat('k_svip3d_err'),
         l1_iso03 = ufloat('l1_iso03'),
         l1_iso04 = ufloat('l1_iso04'),
         l2_iso03 = ufloat('l2_iso03'),
@@ -128,6 +141,34 @@ BToKeeTable = cms.EDProducer(
         k_iso04  = ufloat('k_iso04'),
         b_iso03  = ufloat('b_iso03'),
         b_iso04  = ufloat('b_iso04'),
+        l1_n_isotrk = uint('l1_n_isotrk'),
+        l2_n_isotrk = uint('l2_n_isotrk'),
+        k_n_isotrk = uint('k_n_isotrk'),
+        b_n_isotrk = uint('b_n_isotrk'),
+        l1_iso03_dca = ufloat('l1_iso03_dca'),
+        l1_iso04_dca = ufloat('l1_iso04_dca'),
+        l2_iso03_dca = ufloat('l2_iso03_dca'),
+        l2_iso04_dca = ufloat('l2_iso04_dca'),
+        k_iso03_dca  = ufloat('k_iso03_dca'),
+        k_iso04_dca  = ufloat('k_iso04_dca'),
+        b_iso03_dca  = ufloat('b_iso03_dca'),
+        b_iso04_dca  = ufloat('b_iso04_dca'),
+        l1_n_isotrk_dca = uint('l1_n_isotrk_dca'),
+        l2_n_isotrk_dca = uint('l2_n_isotrk_dca'),
+        k_n_isotrk_dca = uint('k_n_isotrk_dca'),
+        b_n_isotrk_dca = uint('b_n_isotrk_dca'),
+        l1_iso03_dca_tight = ufloat('l1_iso03_dca_tight'),
+        l1_iso04_dca_tight = ufloat('l1_iso04_dca_tight'),
+        l2_iso03_dca_tight = ufloat('l2_iso03_dca_tight'),
+        l2_iso04_dca_tight = ufloat('l2_iso04_dca_tight'),
+        k_iso03_dca_tight  = ufloat('k_iso03_dca_tight'),
+        k_iso04_dca_tight  = ufloat('k_iso04_dca_tight'),
+        b_iso03_dca_tight  = ufloat('b_iso03_dca_tight'),
+        b_iso04_dca_tight  = ufloat('b_iso04_dca_tight'),
+        l1_n_isotrk_dca_tight = uint('l1_n_isotrk_dca_tight'),
+        l2_n_isotrk_dca_tight = uint('l2_n_isotrk_dca_tight'),
+        k_n_isotrk_dca_tight = uint('k_n_isotrk_dca_tight'),
+        b_n_isotrk_dca_tight = uint('b_n_isotrk_dca_tight'),
         n_k_used = uint('n_k_used'),
         n_l1_used = uint('n_l1_used'),
         n_l2_used = uint('n_l2_used'),

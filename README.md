@@ -1,4 +1,6 @@
-# nanoAOD producer customized for BParking analysis (focus on RK/K*/phi)
+# nanoAOD producer customized for BParking analysis 
+
+The focus is on RK/K*/phi analyses.
 
 ## Getting started
 
@@ -9,38 +11,45 @@ cmsenv
 git cms-init
 ```
 
-## Add the latest code and model (2019Aug07) for the electron ID 
+## Add low-pT energy ID and regression
+
+The ID model is `2020Sept15` (depth=15, ntrees=1000).
 
 ```shell
-git cms-addpkg RecoEgamma/EgammaElectronProducers
-git cms-merge-topic CMSBParking:from-CMSSW_10_2_15_2019Aug07
+git cms-merge-topic -u CMSBParking:from-CMSSW_10_2_15_2020Sept15_v1
+git clone --single-branch --branch from-CMSSW_10_2_15_2020Sept15 git@github.com:CMSBParking/RecoEgamma-ElectronIdentification.git $CMSSW_BASE/external/$SCRAM_ARCH/data/RecoEgamma/ElectronIdentification/data
+```
+
+To run on CRAB, the following three lines __must__ be executed:
+
+```shell
 git cms-addpkg RecoEgamma/ElectronIdentification
-scram b
+mkdir -p $CMSSW_BASE/src/RecoEgamma/ElectronIdentification/data/LowPtElectrons
+cp $CMSSW_BASE/external/$SCRAM_ARCH/data/RecoEgamma/ElectronIdentification/data/LowPtElectrons/LowPtElectrons_ID_2020Sept15.root $CMSSW_BASE/src/RecoEgamma/ElectronIdentification/data/LowPtElectrons
+```
 
-# Check $CMSSW_BASE/external exists before this step (e.g. run 'scram b' to create it)
-git clone --single-branch --branch 102X_LowPtElectrons_2019Aug07 git@github.com:CMSBParking/RecoEgamma-ElectronIdentification.git $CMSSW_BASE/external/$SCRAM_ARCH/data/RecoEgamma/ElectronIdentification/data
+## Add support for GBRForest to parse ROOT files
 
-# The following step is required if running on CRAB
-mv $CMSSW_BASE/external/$SCRAM_ARCH/data/RecoEgamma/ElectronIdentification/data/LowPtElectrons $CMSSW_BASE/src/RecoEgamma/ElectronIdentification/data 
+```shell
+git cms-merge-topic -u CMSBParking:convertXMLToGBRForestROOT
 ```
 
 ## Add the modification needed to use post-fit quantities for electrons  
 
 ```shell
-git cms-addpkg TrackingTools/TransientTrack
-git cms-merge-topic -u CMSBParking:GsfTransientTracks
+git cms-merge-topic -u CMSBParking:GsfTransientTracks # unsafe checkout (no checkdeps), but suggested here
 ```
 
 ## Add the modification needed to use the KinematicParticleVertexFitter  
 
 ```shell
-git cms-merge-topic -u CMSBParking:fixKinParticleVtxFitter
+git cms-merge-topic -u CMSBParking:fixKinParticleVtxFitter # unsafe checkout (no checkdeps), but suggested here
 ```
 
 ## Add the BParkingNano package and build everything
 
 ```shell
-git clone git@github.com:CMSBParking/BParkingNANO.git  ./PhysicsTools
+git clone git@github.com:CMSBParking/BParkingNANO.git ./PhysicsTools
 git cms-addpkg PhysicsTools/NanoAOD
 scram b
 ```

@@ -14,8 +14,10 @@ config.General.transferLogs = False
 config.General.workArea = 'BParkingNANO_%s_B0_Data' % production_tag
 
 config.section_('Data')
+
 config.Data.publication = True
 #config.Data.outLFNDirBase = '/store/group/cmst3/group/bpark/%s' % (config.General.workArea)
+
 config.Data.inputDBS = 'global'
 #config.Data.inputDBS = 'phys03'
 #config.Data.publishDBS = 'phys03'
@@ -26,6 +28,7 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '../test/run_nano_cfg_B0.py'
 config.JobType.maxJobRuntimeMin = 4000
 config.JobType.allowUndistributedCMSSW = True
+config.JobType.inputFiles = ["../test/lowPtEleReg_2018_02062020_nv.db"]
 
 config.section_('User')
 config.section_('Site')
