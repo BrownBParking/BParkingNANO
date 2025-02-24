@@ -6,14 +6,14 @@ tracksBPark = cms.EDProducer('TrackMerger',
                              trgMuon    = cms.InputTag("muonTrgSelector:trgMuons"),
                              tracks     = cms.InputTag("packedPFCandidates"),
                              lostTracks = cms.InputTag("lostTracks"),
-                             trkPtCut = cms.double(0.7),
+                             trkPtCut = cms.double(1.),
                              muons      = cms.InputTag("slimmedMuons"),
                              pfElectrons= cms.InputTag("slimmedElectrons"),
                              vertices   = cms.InputTag("offlineSlimmedPrimaryVertices"),
                              trkEtaCut = cms.double(2.5),
-                             dzTrg_cleaning = cms.double(1.),
-                             drTrg_Cleaning = cms.double(0.03),
-                             dcaSig = cms.double(-100000),
+                             dzTrg_cleaning = cms.double(0.5),
+                             drTrg_Cleaning = cms.double(0.4),
+                             dcaSig = cms.double(1.),
                              trkNormChiMin = cms.int32(-1),
                              trkNormChiMax = cms.int32(-1)
                             )
@@ -54,7 +54,7 @@ trackBParkTable = cms.EDProducer(
 tracksBParkMCMatchForTable = cms.EDProducer("MCMatcher",   # cut on deltaR, deltaPt/Pt; pick best by deltaR
     src         = trackBParkTable.src,                     # final reco collection
     matched     = cms.InputTag("finalGenParticlesBPark"),  # final mc-truth particle collection
-    mcPdgId     = cms.vint32(321,211),                     # one or more PDG ID (321 = charged kaon, 211 = charged pion); absolute values (see below)
+    mcPdgId     = cms.vint32(321, 211),                     # one or more PDG ID (321 = charged kaon, 211 = charged pion); absolute values (see below)
     checkCharge = cms.bool(False),              # True = require RECO and MC objects to have the same charge
     mcStatus    = cms.vint32(1),                # PYTHIA status code (1 = stable, 2 = shower, 3 = hard scattering)
     maxDeltaR   = cms.double(0.03),             # Minimum deltaR for the match

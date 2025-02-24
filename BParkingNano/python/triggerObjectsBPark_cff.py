@@ -10,7 +10,7 @@ triggerObjectBParkTable = cms.EDProducer("TriggerObjectTableBParkProducer",
         cms.PSet(
             name = cms.string("Muon"),
             id = cms.int32(13),
-            sel = cms.string("type(83) && pt > 5 && coll('hltIterL3MuonCandidates')"), 
+            sel = cms.string("type(83) && pt > 6 && coll('hltIterL3MuonCandidates')"), 
             l1seed = cms.string("type(-81)"), l1deltaR = cms.double(0.5),
             l2seed = cms.string("type(83) && coll('hltL2MuonCandidates')"),  l2deltaR = cms.double(0.3),
             qualityBits = cms.string("filter('hltL3fL1s*Park*')"), qualityBitsDoc = cms.string("1 = Muon filters for BPH parking"),

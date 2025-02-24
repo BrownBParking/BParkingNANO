@@ -18,15 +18,13 @@ KinVtxFitter::KinVtxFitter(const std::vector<reco::TransientTrack> tracks,
         )
       );
   }
-
   KinematicParticleVertexFitter kcv_fitter;    
   RefCountedKinematicTree vtx_tree = kcv_fitter.fit(particles);
-
+  //std::cout<<vtx_tree->isEmpty()<<std::endl;//" "<<vtx_tree->isValid()<<" "<<vtx_tree->isConsistent()<<std::endl;
   if (vtx_tree->isEmpty() || !vtx_tree->isValid() || !vtx_tree->isConsistent()) {
     success_ = false; 
     return;
   }
-
   vtx_tree->movePointerToTheTop(); 
   fitted_particle_ = vtx_tree->currentParticle();
   fitted_vtx_ = vtx_tree->currentDecayVertex();

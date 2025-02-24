@@ -85,8 +85,9 @@ if not options.inputFiles:
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToKDToKKstar0_19Oct2020_MINIAOD_14.root',
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToKDToKKstar0_19Oct2020_MINIAOD_15.root',
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToKDToKKstar0_19Oct2020_MINIAOD_16.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BsToRhoDs_ToKKPi_06Jul20.root'
+                         'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BsToRhoDs_ToKKPi_06Jul20.root'
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToPiDToKPiPi_30Jul2020_MINIAOD.root'
+                         #'file:/eos/uscms/store/user/tkwon/BPH-RunIIAutumn18MiniAOD-00170.root'
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BsToPiDsToPiPhi_10Aug2020_MINIAOD.root'
                          #'file:/eos/uscms/store/user/tkwon/BsToPiDs_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_03Nov20/MC_generation_BsToPiDs_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_10Nov20/201110_145913/0000/BPH-RunIIAutumn18MiniAOD-00170_1.root'
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpipi_27Sep2020_MINIAOD.root'
@@ -127,7 +128,7 @@ if not options.inputFiles:
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD7.root',
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD8.root',
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD9.root'
-                         'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKKpi_18May2020_MINIAOD.root'
+                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKKpi_18May2020_MINIAOD.root'
                          ]
 annotation = '%s nevts:%d' % (outputFileNANO, options.maxEvents)
 
@@ -160,6 +161,7 @@ process.source = cms.Source(
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(options.wantSummary),
+    SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
 
 process.nanoMetadata.strings.tag = annotation
@@ -247,8 +249,8 @@ process.schedule = cms.Schedule(
                                 #process.nanoAOD_KstarEE_step,
                                 #process.nanoAOD_step,
 																#process.nanoAOD_BToPiD0_step,
-																#process.nanoAOD_BsToPiDs_step,
-																process.nanoAOD_B0ToKD_step,
+																process.nanoAOD_BsToPiDs_step,
+																#process.nanoAOD_B0ToKD_step,
                                 process.endjob_step, 
                                 process.NANOAODoutput_step
                                )
@@ -260,8 +262,8 @@ if options.wantFullRECO:
                                     #process.nanoAOD_KstarEE_step,
 																		#process.nanoAOD_step,
 																		#process.nanoAOD_BToPiD0_step,
-																		#process.nanoAOD_BsToPiDs_step,
-																		process.nanoAOD_B0ToKD_step,
+																		process.nanoAOD_BsToPiDs_step,
+																		#process.nanoAOD_B0ToKD_step,
                                     process.endjob_step, 
                                     process.FEVTDEBUGHLToutput_step, 
                                     process.NANOAODoutput_step
@@ -269,18 +271,18 @@ if options.wantFullRECO:
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
-process.NANOAODoutput.SelectEvents = cms.untracked.PSet(
+"""process.NANOAODoutput.SelectEvents = cms.untracked.PSet(
         SelectEvents = cms.vstring(
                                    #'nanoAOD_step',
                                    #'nanoAOD_BToPiD0_step'
-                                   #'nanoAOD_BsToPiDs_step'
-                                   'nanoAOD_B0ToKD_step'
+                                   'nanoAOD_BsToPiDs_step'
+                                   #'nanoAOD_B0ToKD_step'
                                    #'nanoAOD_KMuMu_step', 
                                    #'nanoAOD_Kee_step',
                                    #'nanoAOD_KstarMuMu_step',
                                    #'nanoAOD_KstarEE_step'
 																	 ))
-
+"""
 
 ### from https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/3287/1/1/1/1/1.html
 process.add_(cms.Service('InitRootHandlers', EnableIMT = cms.untracked.bool(False)))

@@ -86,48 +86,9 @@ if not options.inputFiles:
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToKDToKKstar0_19Oct2020_MINIAOD_15.root',
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToKDToKKstar0_19Oct2020_MINIAOD_16.root',
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BsToRhoDs_ToKKPi_06Jul20.root'
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToPiDToKPiPi_30Jul2020_MINIAOD.root'
+                         'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/B0ToPiDToKPiPi_30Jul2020_MINIAOD.root'
                          #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BsToPiDsToPiPhi_10Aug2020_MINIAOD.root'
                          #'file:/eos/uscms/store/user/tkwon/BsToPiDs_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_03Nov20/MC_generation_BsToPiDs_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_10Nov20/201110_145913/0000/BPH-RunIIAutumn18MiniAOD-00170_1.root'
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpipi_27Sep2020_MINIAOD.root'
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_0.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_1.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_2.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_3.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_4.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_5.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_6.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_7.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_8.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_9.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_10.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_11.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_12.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_13.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_14.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_15.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_16.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_17.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_18.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_19.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_20.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_21.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_22.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_23.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_24.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_25.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_26.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_27.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuTopiD0_10Oct2020_MINIAOD_28.root'
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD1.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD2.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD3.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD4.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD5.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD7.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD8.root',
-                         #'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKpiRho_19Jun2020_MINIAOD9.root'
-                         'file:/eos/uscms/store/user/tkwon/BParking/MC_Production/BuToKKpi_18May2020_MINIAOD.root'
                          ]
 annotation = '%s nevts:%d' % (outputFileNANO, options.maxEvents)
 
@@ -160,6 +121,7 @@ process.source = cms.Source(
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(options.wantSummary),
+    SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
 
 process.nanoMetadata.strings.tag = annotation
@@ -269,7 +231,7 @@ if options.wantFullRECO:
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
-process.NANOAODoutput.SelectEvents = cms.untracked.PSet(
+"""process.NANOAODoutput.SelectEvents = cms.untracked.PSet(
         SelectEvents = cms.vstring(
                                    #'nanoAOD_step',
                                    #'nanoAOD_BToPiD0_step'
@@ -280,11 +242,11 @@ process.NANOAODoutput.SelectEvents = cms.untracked.PSet(
                                    #'nanoAOD_KstarMuMu_step',
                                    #'nanoAOD_KstarEE_step'
 																	 ))
-
+"""
 
 ### from https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/3287/1/1/1/1/1.html
 process.add_(cms.Service('InitRootHandlers', EnableIMT = cms.untracked.bool(False)))
-process.NANOAODoutput.fakeNameForCrab=cms.untracked.bool(True)    
+process.NANOAODoutput.fakeNameForCrab=cms.untracked.bool(True) 
 
 process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete

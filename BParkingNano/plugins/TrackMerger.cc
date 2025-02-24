@@ -83,6 +83,7 @@ private:
 
 void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const &stp) const {
 
+  //std::cout<<"Track sequence"<<std::endl;
   //input
   edm::Handle<reco::BeamSpot> beamSpotHandle;
   evt.getByToken(beamSpotSrc_, beamSpotHandle);
@@ -107,6 +108,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
   edm::Handle<reco::VertexCollection> vertexHandle;
   evt.getByToken(vertexToken_, vertexHandle);
   const reco::Vertex & PV = vertexHandle->front();
+  math::XYZPoint pv(PV.x(), PV.y(), PV.z());
 
   //for lost tracks / pf discrimination
   unsigned int nTracks = tracks->size();
@@ -123,13 +125,16 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
    std::vector<pat::PackedCandidate> totalTracks(*tracks);
    totalTracks.insert(totalTracks.end(),lostTracks->begin(),lostTracks->end());
   */
- 
-  // for loop is better to be range based - especially for large ensembles  
+
+   // for loop is better to be range based - especially for large ensembles  
   for( unsigned int iTrk=0; iTrk<totalTracks; ++iTrk ) {
-    const pat::PackedCandidate & trk = (iTrk < nTracks) ? (*tracks)[iTrk] : (*lostTracks)[iTrk-nTracks];
+    const pat::PackedCandidate & trk = (iTrk < nTracks) ? (*tracks)[iTrk] : (*tracks)[iTrk-nTracks];
 
     //arranging cuts for speed
+    //std::cout<<"1 : "<<trk.pdgId()<<std::endl;
+    //const reco::TransientTrack faketrackTT( (*trk.bestTrack()) , &(*bFieldHandle));
     if(!trk.hasTrackDetails()) continue;
+//    std::cout<<"2 : "<<trk.pdgId()<<std::endl;
     if(abs(trk.pdgId()) != 211) continue; //do we want also to keep muons?
     if(trk.pt() < trkPtCut_ ) continue;
     if(fabs(trk.eta()) > trkEtaCut_) continue;
@@ -141,6 +146,8 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
 
     bool skipTrack=true;
     for (const pat::Muon & mu: *trgMuons){
+      //std::cout<<"dz wrt PV : "<<mu.vz() - PV.z()<<std::endl;
+
       //remove tracks inside trg muons jet
       if(reco::deltaR(trk, mu) < drTrg_Cleaning_ && drTrg_Cleaning_ >0) 
         continue;
@@ -161,8 +168,7 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     float DCABS = DCA.first;
     float DCABSErr = DCA.second;
     float DCASig = (DCABSErr != 0 && float(DCABSErr) == DCABSErr) ? fabs(DCABS/DCABSErr) : -1;
-    if (DCASig >  dcaSig_  && dcaSig_ >0) continue;
-
+    if (DCASig <  dcaSig_  && dcaSig_ >0) continue;
     // clean tracks wrt to all muons
     int matchedToMuon       = 0;
     int matchedToLooseMuon  = 0;
@@ -202,6 +208,8 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
 
     }
 
+    //std::cout<<trk.dz()<<" vs "<<trk.dz(pv)<<std::endl;
+
     pat::CompositeCandidate pcand;
     pcand.setP4(trk.p4());
     pcand.setCharge(trk.charge());
@@ -209,10 +217,10 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     pcand.setPdgId(trk.pdgId());
     pcand.addUserInt("isPacked", (iTrk < nTracks));
     pcand.addUserInt("isLostTrk", (iTrk < nTracks) ? 0 : 1);      
-    pcand.addUserFloat("dxy", trk.dxy());
-    pcand.addUserFloat("dxyS", trk.dxy()/trk.dxyError());
-    pcand.addUserFloat("dz", trk.dz()); 
-    pcand.addUserFloat("dzS", trk.dz()/trk.dzError());
+    pcand.addUserFloat("dxy", trk.dxy(pv));
+    pcand.addUserFloat("dxyS", trk.dxy(pv)/trk.dxyError());
+    pcand.addUserFloat("dz", trk.dz(pv)); 
+    pcand.addUserFloat("dzS", trk.dz(pv)/trk.dzError());
     pcand.addUserFloat("DCASig", DCASig);
     pcand.addUserInt("isMatchedToMuon", matchedToMuon);
     pcand.addUserInt("isMatchedToLooseMuon", matchedToLooseMuon);

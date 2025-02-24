@@ -87,7 +87,8 @@ MuonTriggerSelector::MuonTriggerSelector(const edm::ParameterSet &iConfig):
 
 
 void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
-    
+  
+    //std::cout<<"muon trigger sequence"<<std::endl;  
     edm::ESHandle<MagneticField> bFieldHandle;
     iSetup.get<IdealMagneticFieldRecord>().get(bFieldHandle);
 
@@ -121,15 +122,26 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 	} 
 
       if(!isTriggerMuon) continue; 
-      for (unsigned h = 0; h < obj.filterLabels().size(); ++h){
-	std::string filterName = obj.filterLabels()[h];
-	if(filterName.find("hltL3") != std::string::npos  && filterName.find("Park") != std::string::npos){
-	  isTriggerMuon = true;
-	  if(debug) std::cout << "\t   Filters:   " << filterName; 
-	  break;
-	}
+  for (unsigned h = 0; h < obj.filterLabels().size(); ++h){
+    std::string filterName = obj.filterLabels()[h];
+    if(filterName.find("hltL3") != std::string::npos  && filterName.find("Park") != std::string::npos){
+    isTriggerMuon = true;
+    if(debug) std::cout << "\t   Filters:   " << filterName;
+    break;
+  }
 	else{ isTriggerMuon = false; }
       }
+
+  if(!isTriggerMuon) continue;
+
+  for (unsigned h = 0; h < obj.pathNames().size(); ++h){
+	  std::string pathName = obj.pathNames()[h];
+  	if((pathName.find("HLT_Mu12_IP6") != std::string::npos) | (pathName.find("HLT_Mu9_IP5") != std::string::npos) | (pathName.find("HLT_Mu9_IP6") != std::string::npos) | (pathName.find("HLT_Mu7_IP4") != std::string::npos)){
+	  isTriggerMuon = true;
+    //cout<<pathName<<endl;
+	  if(debug) std::cout << "\t   paths:   " << pathName; 
+	  break;
+	}else{ isTriggerMuon = false;}}
 
       if(!isTriggerMuon) continue;
       triggeringMuons.push_back(obj);

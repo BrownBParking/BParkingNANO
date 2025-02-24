@@ -34,7 +34,7 @@ options.register('skip', 0,
     "skip first N events"
 )
 
-options.setDefault('maxEvents', -1)
+options.setDefault('maxEvents', 1000)
 options.setDefault('tag', '10215')
 options.parseArguments()
 
@@ -160,6 +160,7 @@ process.source = cms.Source(
 
 process.options = cms.untracked.PSet(
     wantSummary = cms.untracked.bool(options.wantSummary),
+    SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
 
 process.nanoMetadata.strings.tag = annotation
@@ -246,9 +247,9 @@ process.schedule = cms.Schedule(
                                 #process.nanoAOD_KstarMuMu_step,
                                 #process.nanoAOD_KstarEE_step,
                                 #process.nanoAOD_step,
-																#process.nanoAOD_BToPiD0_step,
+																process.nanoAOD_BToPiD0_step,
 																#process.nanoAOD_BsToPiDs_step,
-																process.nanoAOD_B0ToKD_step,
+																#process.nanoAOD_B0ToKD_step,
                                 process.endjob_step, 
                                 process.NANOAODoutput_step
                                )
@@ -259,9 +260,9 @@ if options.wantFullRECO:
                                     #process.nanoAOD_KstarMuMu_step,
                                     #process.nanoAOD_KstarEE_step,
 																		#process.nanoAOD_step,
-																		#process.nanoAOD_BToPiD0_step,
+																		process.nanoAOD_BToPiD0_step,
 																		#process.nanoAOD_BsToPiDs_step,
-																		process.nanoAOD_B0ToKD_step,
+																		#process.nanoAOD_B0ToKD_step,
                                     process.endjob_step, 
                                     process.FEVTDEBUGHLToutput_step, 
                                     process.NANOAODoutput_step
@@ -269,18 +270,18 @@ if options.wantFullRECO:
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
-process.NANOAODoutput.SelectEvents = cms.untracked.PSet(
+"""process.NANOAODoutput.SelectEvents = cms.untracked.PSet(
         SelectEvents = cms.vstring(
                                    #'nanoAOD_step',
                                    #'nanoAOD_BToPiD0_step'
                                    #'nanoAOD_BsToPiDs_step'
-                                   'nanoAOD_B0ToKD_step'
+                                   #'nanoAOD_B0ToKD_step'
                                    #'nanoAOD_KMuMu_step', 
                                    #'nanoAOD_Kee_step',
                                    #'nanoAOD_KstarMuMu_step',
                                    #'nanoAOD_KstarEE_step'
 																	 ))
-
+"""
 
 ### from https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/3287/1/1/1/1/1.html
 process.add_(cms.Service('InitRootHandlers', EnableIMT = cms.untracked.bool(False)))

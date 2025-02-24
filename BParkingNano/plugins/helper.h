@@ -78,14 +78,46 @@ inline float CosA(GlobalPoint & dist, ROOT::Math::LorentzVector<ROOT::Math::PxPy
 }
 
 
-inline std::pair<double,double> computeDCA(const reco::TransientTrack& trackTT,
-					   const reco::BeamSpot& beamSpot)
+/*inline std::pair<double,double> computeDCA(const reco::TransientTrack& trackTT,
+					   const math::XYZPoint& point)
 {
   double DCABS    = -1.;
   double DCABSErr = -1.;
 
   TrajectoryStateClosestToPoint theDCAXBS = 
+    trackTT.trajectoryStateClosestToPoint(GlobalPoint(point.x(), point.y(), point.z()));
+  if (theDCAXBS.isValid()) {
+    DCABS    = theDCAXBS.perigeeParameters().transverseImpactParameter();
+    DCABSErr = theDCAXBS.perigeeError().transverseImpactParameterError();
+  }
+
+  return std::make_pair(DCABS,DCABSErr);
+}*/
+
+inline std::pair<double,double> computeDCA(const reco::TransientTrack& trackTT,
+             const reco::BeamSpot& beamSpot)
+{
+  double DCABS    = -1.;
+  double DCABSErr = -1.;
+
+  TrajectoryStateClosestToPoint theDCAXBS =
     trackTT.trajectoryStateClosestToPoint(GlobalPoint(beamSpot.position().x(),beamSpot.position().y(),beamSpot.position().z()));
+  if (theDCAXBS.isValid()) {
+    DCABS    = theDCAXBS.perigeeParameters().transverseImpactParameter();
+    DCABSErr = theDCAXBS.perigeeError().transverseImpactParameterError();
+  }
+
+  return std::make_pair(DCABS,DCABSErr);
+}
+
+inline std::pair<double,double> computeDCA(const reco::TransientTrack& trackTT,
+             const math::XYZPoint pv)
+{
+  double DCABS    = -1.;
+  double DCABSErr = -1.;
+
+  TrajectoryStateClosestToPoint theDCAXBS =
+    trackTT.trajectoryStateClosestToPoint(GlobalPoint(pv.x(),pv.y(),pv.z()));
   if (theDCAXBS.isValid()) {
     DCABS    = theDCAXBS.perigeeParameters().transverseImpactParameter();
     DCABSErr = theDCAXBS.perigeeError().transverseImpactParameterError();
