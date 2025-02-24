@@ -10,24 +10,30 @@ production_tag = datetime.date.today().strftime('%Y%b%d')
 config = config()
 config.section_('General')
 config.General.transferOutputs = True
-config.General.transferLogs = True
-config.General.workArea = 'BParkingNANO_%s' % production_tag
+config.General.transferLogs = False
+config.General.workArea = 'BParkingNANO_%s_B0_Data' % production_tag
 
 config.section_('Data')
-config.Data.publication = False
-config.Data.outLFNDirBase = '/store/group/phys_bphys/bpark/nanoaod_RK2021/%s' % (config.General.workArea)
+
+config.Data.publication = True
+#config.Data.outLFNDirBase = '/store/group/cmst3/group/bpark/%s' % (config.General.workArea)
+
 config.Data.inputDBS = 'global'
+#config.Data.inputDBS = 'phys03'
+#config.Data.publishDBS = 'phys03'
+config.Data.totalUnits = -1
 
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '../test/run_nano_cfg.py'
-config.JobType.maxJobRuntimeMin = 3000
+config.JobType.psetName = '../test/run_nano_cfg_B0.py'
+config.JobType.maxJobRuntimeMin = 4000
 config.JobType.allowUndistributedCMSSW = True
 config.JobType.inputFiles = ["../test/lowPtEleReg_2018_02062020_nv.db"]
 
 config.section_('User')
 config.section_('Site')
-config.Site.storageSite = 'T2_CH_CERN'
+config.Site.storageSite = 'T3_US_FNALLPC'
+config.Site.ignoreGlobalBlacklist = True
 
 if __name__ == '__main__':
 
@@ -47,7 +53,8 @@ if __name__ == '__main__':
 
   parser = ArgumentParser()
   parser.add_argument('-y', '--yaml', default = 'samples.yml', help = 'File with dataset descriptions')
-  parser.add_argument('-f', '--filter', default='*', help = 'filter samples, POSIX regular expressions allowed')
+  parser.add_argument('-f', '--filter', default='data_Run2018*', help = 'filter samples, POSIX regular expressions allowed')
+#  parser.add_argument('-f', '--filter', default='BsToKDs*', help = 'filter samples, POSIX regular expressions allowed')
   args = parser.parse_args()
 
   with open(args.yaml) as f:
@@ -100,5 +107,8 @@ if __name__ == '__main__':
         config.JobType.outputFiles = ['_'.join(['BParkNANO', 'mc' if isMC else 'data', production_tag])+'.root']
         
         print config
-        submit(config)
+        p = Process(target=submit, args=(config,))
+        p.start()
+        p.join()
+        #submit(config)
 

@@ -24,8 +24,6 @@
 #include "KinVtxFitter.h"
 
 
-
-
 class KstarBuilder : public edm::global::EDProducer<> {
 
   
@@ -39,8 +37,8 @@ public:
     pre_vtx_selection_{cfg.getParameter<std::string>("preVtxSelection")},
     post_vtx_selection_{cfg.getParameter<std::string>("postVtxSelection")},
     pfcands_{consumes<pat::CompositeCandidateCollection>( cfg.getParameter<edm::InputTag>("pfcands") )},
-    ttracks_{consumes<TransientTrackCollection>( cfg.getParameter<edm::InputTag>("transientTracks") )} {
-
+    ttracks_{consumes<TransientTrackCollection>( cfg.getParameter<edm::InputTag>("transientTracks") )},
+    beamspot_{consumes<reco::BeamSpot>( cfg.getParameter<edm::InputTag>("beamSpot") )} {
       //output
        produces<pat::CompositeCandidateCollection>();
 
@@ -59,6 +57,8 @@ private:
   const StringCutObjectSelector<pat::CompositeCandidate> post_vtx_selection_; // cut on the di-lepton after the SV fit
   const edm::EDGetTokenT<pat::CompositeCandidateCollection> pfcands_; //input PF cands this is sorted in pT in previous step
   const edm::EDGetTokenT<TransientTrackCollection> ttracks_; //input TTracks of PF cands
+  const edm::EDGetTokenT<reco::BeamSpot> beamspot_;  
+
 };
 
 
@@ -70,22 +70,24 @@ void KstarBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const
   edm::Handle<TransientTrackCollection> ttracks;
   evt.getByToken(ttracks_, ttracks);
  
+  edm::Handle<reco::BeamSpot> beamspot;
+  evt.getByToken(beamspot_, beamspot);  
+
 
   // output
   std::unique_ptr<pat::CompositeCandidateCollection> kstar_out(new pat::CompositeCandidateCollection());
 
   
-
   // main loop
   for(size_t trk1_idx = 0; trk1_idx < pfcands->size(); ++trk1_idx ){
 
     edm::Ptr<pat::CompositeCandidate> trk1_ptr( pfcands, trk1_idx );
     if(!trk1_selection_(*trk1_ptr)) continue; 
     
-    for(size_t trk2_idx = trk1_idx + 1; trk2_idx < pfcands->size(); ++trk2_idx) {
-
+    for(size_t trk2_idx = 0; trk2_idx < pfcands->size(); ++trk2_idx) {
      edm::Ptr<pat::CompositeCandidate> trk2_ptr( pfcands, trk2_idx );
      if (trk1_ptr->charge() == trk2_ptr->charge()) continue; 
+     if (trk1_idx == trk2_idx) continue;
      if(!trk2_selection_(*trk2_ptr)) continue;
           
      // create a K* candidate; add first quantities that can be used for pre fit selection
@@ -122,6 +124,8 @@ void KstarBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const
         );
       if ( !fitter.success() ) continue;           
 
+      auto fit_p4 = fitter.fitted_p4();
+
       // save quantities after fit
       kstar_cand.addUserFloat("sv_chi2", fitter.chi2());
       kstar_cand.addUserFloat("sv_ndof", fitter.dof()); 
@@ -130,6 +134,18 @@ void KstarBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const
       kstar_cand.addUserFloat("fitted_pt", fitter.fitted_candidate().globalMomentum().perp() );
       kstar_cand.addUserFloat("fitted_eta", fitter.fitted_candidate().globalMomentum().eta() );
       kstar_cand.addUserFloat("fitted_phi", fitter.fitted_candidate().globalMomentum().phi() );
+
+      kstar_cand.addUserFloat(
+        "cos_theta_2D", 
+        cos_theta_2D(fitter, *beamspot, kstar_cand.p4())
+        );
+      kstar_cand.addUserFloat(
+        "fitted_cos_theta_2D", 
+        cos_theta_2D(fitter, *beamspot, fit_p4)
+        );
+      auto lxy = l_xy(fitter, *beamspot);
+      kstar_cand.addUserFloat("l_xy", lxy.value());
+      kstar_cand.addUserFloat("l_xy_unc", lxy.error());
 
       // second mass hypothesis
       auto fitted_trk1= fitter.daughter_p4(0);

@@ -1,10 +1,10 @@
 common:
   data:
-    lumimask : https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions18/13TeV/ReReco/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt
+    lumimask : Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt
     splitting: 20
     globaltag: 102X_dataRun2_v11
   mc:
-    splitting: 1
+    splitting: 20
     globaltag: 102X_upgrade2018_realistic_v15
 
 samples:
@@ -37,7 +37,6 @@ samples:
       - 3
       - 4
       - 5
-      - 6
   data_Run2018D_part%d:
     dataset: /ParkingBPH%d/Run2018D-05May2019promptD-v1/MINIAOD
     isMC: False
@@ -143,6 +142,30 @@ samples:
     dataset: /BdToKstarPsi2S_ToKPiee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/RunIIAutumn18MiniAOD-PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v1/MINIAODSIM 
     isMC: True
 
-  BdToKstarPsi2S_Toee_v2:
-    dataset: /BdToKstarPsi2S_ToKPiee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/RunIIAutumn18MiniAOD-PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM
+  BToPiD0:
+    dataset: /BuToPiAntiD0_ToKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_22Oct20/ktaeun-MC_generation_BuToPiAntiD0_ToKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_03Nov20-357e3f43f2c45db786fe101934fe16d6/USER
+    isMC: True
+  BsToPiDs1:
+    dataset: /BsToPiDs_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_03Nov20/ktaeun-MC_generation_BsToPiDs_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_10Nov20-357e3f43f2c45db786fe101934fe16d6/USER
+    isMC: True
+  BsToPiDs2:
+    dataset: /BsToPiDs_ToKKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_22May2021/ktaeun-MC_generation_BsToPiDs_ToKKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_06Jun2021-f8accc988b34193f911df52eaf966f0c/USER
+    isMC: True
+  B0ToKD:
+    dataset: /B0ToKD_ToPiKstar0_ToKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_14Nov20/ktaeun-MC_generation_B0ToKD_ToPiKstar0_ToKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_24Nov20-357e3f43f2c45db786fe101934fe16d6/USER
+    isMC: True
+  B0ToPiD:
+    dataset: /B0ToPiD_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_14Jan21/ktaeun-MC_generation_B0ToPiD_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_19Jan21-f8accc988b34193f911df52eaf966f0c/USER
+    isMC: True
+  B0ToRhoD:
+    dataset: /B0ToRhoD_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen/ktaeun-MC_generation_B0ToRhoD_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD-f8accc988b34193f911df52eaf966f0c/USER
+    isMC: True
+  B0ToKstarD:
+    dataset: /B0ToKstarD_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_v2/ktaeun-MC_generation_B0ToKstarD_ToKPiPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD-f8accc988b34193f911df52eaf966f0c/USER
+    isMC: True
+  BsToKDs:
+    dataset: /BsToKDs_ToKKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_12Jun2021/ktaeun-MC_generation_BsToKDs_ToKKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_15Jun2021-d0e34d3efbe1c731d101268d8c1a89ce/USER
+    isMC: True
+  BToKD0:
+    dataset: /BToKD0_ToKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_22May2021/ktaeun-MC_generation_BToKD0_ToKPi_MuFilter_TuneCP5_13TeV-pythia8-evtgen_MINIAOD_01Jun2021-f8accc988b34193f911df52eaf966f0c/USER
     isMC: True
